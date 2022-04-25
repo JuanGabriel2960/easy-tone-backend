@@ -2,15 +2,20 @@ package database
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"os"
 	"time"
 
+	env "github.com/JuanGabriel2960/easy-tone-backend/env"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func GetCollection(collection string) *mongo.Collection {
-	client, err := mongo.NewClient(options.Client().ApplyURI(""))
+	env.Load()
+
+	client, err := mongo.NewClient(options.Client().ApplyURI(fmt.Sprintf("mongodb+srv://%s:%s@%s/%s", os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_HOST"), os.Getenv("DB_NAME"))))
 
 	if err != nil {
 		log.Fatal(err)
@@ -23,5 +28,5 @@ func GetCollection(collection string) *mongo.Collection {
 		log.Fatal(err)
 	}
 
-	return client.Database("").Collection(collection)
+	return client.Database("EasyToneDB").Collection(collection)
 }
