@@ -48,3 +48,22 @@ func GetExercise(c *fiber.Ctx) error {
 
 	return c.JSON(exercise)
 }
+
+func GetPiece(c *fiber.Ctx) error {
+	degree := c.Params("degree")
+
+	var collection = database.GetCollection("pieces")
+	var piece models.Piece
+
+	filter := bson.M{"degree": degree}
+
+	cur := collection.FindOne(ctx, filter)
+
+	err := cur.Decode(&piece)
+
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(piece)
+}
