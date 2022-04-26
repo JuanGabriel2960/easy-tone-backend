@@ -9,12 +9,12 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-var collection = database.GetCollection("theories")
 var ctx = context.Background()
 
 func GetTheory(c *fiber.Ctx) error {
 	degree := c.Params("degree")
 
+	var collection = database.GetCollection("theories")
 	var theory models.Theory
 
 	filter := bson.M{"degree": degree}
@@ -28,4 +28,23 @@ func GetTheory(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(theory)
+}
+
+func GetExercise(c *fiber.Ctx) error {
+	degree := c.Params("degree")
+
+	var collection = database.GetCollection("exercises")
+	var exercise models.Exercise
+
+	filter := bson.M{"degree": degree}
+
+	cur := collection.FindOne(ctx, filter)
+
+	err := cur.Decode(&exercise)
+
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(exercise)
 }

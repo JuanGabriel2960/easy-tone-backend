@@ -6,5 +6,6 @@ import (
 )
 
 func DegreeRouter(route fiber.Router) {
-	route.Get("/:degree", controllers.GetTheory)
+	route.Get("/theory/:degree", controllers.GetTheory)
+	route.Get("/exercise/:degree", controllers.GetExercise)
 }
