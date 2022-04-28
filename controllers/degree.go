@@ -9,61 +9,30 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-var ctx = context.Background()
+var ctxx = context.Background()
 
-func GetTheory(c *fiber.Ctx) error {
-	degree := c.Params("degree")
+func GetSongs(c *fiber.Ctx) error {
+	var collection = database.GetCollection("songs")
+	var songs models.Songs
 
-	var collection = database.GetCollection("theories")
-	var theory models.Theory
+	filter := bson.D{}
 
-	filter := bson.M{"degree": degree}
-
-	cur := collection.FindOne(ctx, filter)
-
-	err := cur.Decode(&theory)
+	cur, err := collection.Find(ctxx, filter)
 
 	if err != nil {
 		return err
 	}
 
-	return c.JSON(theory)
-}
+	for cur.Next(ctxx) {
+		var song models.Song
+		err = cur.Decode(&song)
 
-func GetExercise(c *fiber.Ctx) error {
-	degree := c.Params("degree")
+		if err != nil {
+			return err
+		}
 
-	var collection = database.GetCollection("exercises")
-	var exercise models.Exercise
-
-	filter := bson.M{"degree": degree}
-
-	cur := collection.FindOne(ctx, filter)
-
-	err := cur.Decode(&exercise)
-
-	if err != nil {
-		return err
+		songs = append(songs, &song)
 	}
 
-	return c.JSON(exercise)
-}
-
-func GetPiece(c *fiber.Ctx) error {
-	degree := c.Params("degree")
-
-	var collection = database.GetCollection("pieces")
-	var piece models.Piece
-
-	filter := bson.M{"degree": degree}
-
-	cur := collection.FindOne(ctx, filter)
-
-	err := cur.Decode(&piece)
-
-	if err != nil {
-		return err
-	}
-
-	return c.JSON(piece)
+	return c.JSON(songs)
 }
