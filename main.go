@@ -17,6 +17,7 @@ func main() {
 	app.Use(cors.New())
 
 	routes.DegreeRouter(app.Group("api/degree"))
+	routes.ResourcesRouter(app.Group("api/resources"))
 
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("easy-tone-backend")
